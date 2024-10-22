@@ -22,11 +22,11 @@ from zope import event
 
 from zope.intid.interfaces import IIntIds
 
-from interfaces import IInvalidateCacheEvent, IMemcachedClient
+from lovely.memcached.interfaces import IInvalidateCacheEvent, IMemcachedClient
 
 
+@interface.implementer(IInvalidateCacheEvent)
 class InvalidateCacheEvent(object):
-    interface.implements(IInvalidateCacheEvent)
 
     def __init__(self,
             cacheName=None, key=None, ns=None, raw=False, dependencies=[]):
