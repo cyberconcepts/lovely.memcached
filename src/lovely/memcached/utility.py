@@ -17,20 +17,20 @@ $Id$
 __docformat__ = "reStructuredText"
 
 
-import md5
+from hashlib import md5
 import random
 import sys
 import time
 import logging
 import memcache
-import cPickle
+import pickle as cPickle
 import threading
 import persistent
 import os
 import socket
 from zope.schema.fieldproperty import FieldProperty
 from zope import interface
-from interfaces import IMemcachedClient
+from lovely.memcached.interfaces import IMemcachedClient
 
 TLOCAL = threading.local()
 
@@ -46,8 +46,8 @@ DEP_NS = NS + '.dep'
 class Storage(object):
     pass
 
+@interface.implementer(IMemcachedClient)
 class MemcachedClient(persistent.Persistent):
-    interface.implements(IMemcachedClient)
 
     defaultNS = FieldProperty(IMemcachedClient['defaultNS'])
     servers = FieldProperty(IMemcachedClient['servers'])
@@ -86,7 +86,7 @@ class MemcachedClient(persistent.Persistent):
         if not raw:
             data = cPickle.dumps(data)
         elif not isinstance(data, str):
-            raise ValueError, data
+            raise ValueError(data)
         log.debug('set: %r, %r, %r, %r' % (key,
                                            len(data), ns,
                                            lifetime))
@@ -187,7 +187,7 @@ class MemcachedClient(persistent.Persistent):
             if ns:
                 key = ns+key
             if not isinstance(key, str):
-                raise ValueError, repr(key)
+                raise ValueErrorr(repr(key))
             return key
 
         oid = getattr(key, '_p_oid', None)
@@ -269,7 +269,7 @@ class MemcachedClient(persistent.Persistent):
 
     def keys(self, ns=None):
         if not self.trackKeys:
-            raise NotImplementedError, "trackKeys not enabled"
+            raise NotImplementedError("trackKeys not enabled")
         res = set()
         s = self.storage
         t = time.time()
