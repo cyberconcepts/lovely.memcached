@@ -194,9 +194,9 @@ class MemcachedClient(persistent.Persistent):
         if oid is not None:
             key = oid
         if ns is not None:
-            m = md5.new(cPickle.dumps((ns, key)))
+            m = md5(cPickle.dumps((ns, key)))
         else:
-            m = md5.new(cPickle.dumps(key))
+            m = md5(cPickle.dumps(key))
         return m.hexdigest()
 
     @property
@@ -225,7 +225,7 @@ class MemcachedClient(persistent.Persistent):
             log.info('Creating new local storage with key %r' % (key,))
             storage = self._storages()[key] = Storage()
         if self.trackKeys and not hasattr(storage, 'keys'):
-            tName = threading.currentThread().getName()
+            tName = threading.current_thread().name
             pid = os.getpid()
             hostName = socket.gethostname()
             uid = '%s-%s-%s' % (hostName,
